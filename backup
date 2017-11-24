@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "Backing up ..."
+scp ./sender.py z5087077@cse.unsw.edu.au:~/COMP3331/ass1
+scp ./notes z5087077@cse.unsw.edu.au:~/COMP3331/ass1
+scp ./receiver.py z5087077@cse.unsw.edu.au:~/COMP3331/ass1
+scp ./test*.txt z5087077@cse.unsw.edu.au:~/COMP3331/ass1
+echo "Done"
+
+

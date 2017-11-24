@@ -1,0 +1,71 @@
+* Use of a sendBase to track the sequence number of the oldest unacknowledged byte.
+ (SendBase-1) is the seq num of the last byte ACKed
+
+* Single retransmission timer on packets !
+   - if it times out retransmit packet of not-yet-acked smallest seq num, reset timer
+   - if receive an ACK, if theres still any unacked segs , reset timer
+   - writing and sending data, if there isn't any active timer, start it
+
+
+
+-> Cases : Premature timeout (receiver handle it)
+   duplicate pakcet may be sent that can be ignored due to higher ACK number (cummulative ACK involved)
+   just resend current ACK number
+   check seqNum + len(data) is less than your receiverBase and ignore, otherwise process
+   send back new ACK num (or use current)
+
+-> Fast retransmit : 3 duplicate ACKs from receiver (sender handle it)
+   resend the previous packet
+
+
+Sender just sending packets like crazy , in window size (all stuffs must be ACK'ed before window can move on)
+
+Reciver has to buffer any out-of-order packets and write them in order
+eg. 
+
+Buffer   --- first in window was dropped but already received others 
+             (would have triggered fast retransmit by then)
+
+---------------------
+| X | V | V | V | V |
+---------------------
+| V | V | V | V | V |
+---------------------
+
+When the receiver receives a sequence number larger than expected (its out of order) or gap detected
+
+writeToFile has to check and see if any packets match (expected Sequence), if there is
+remove from buffer -> write data -> incremenet expectedSequence and repeat
+
+
+
+Receiver : 
+
+Does it in 1 loop
+
+- Recv.  
+
+if duplicate discard it
+if data throw into buffer (so that even if its out of order it doesn't get written immediately)
+
+inspect the buffer for correct seq. packet , write to file if theres any
+whenever you write you can raise the ACK value along as well 
+
+otherwise move on to replies
+
+  control packets reply 
+
+  data 
+  -> if in order then do normal
+  -> if out of order just resend the previous ACK value 
+
+
+Receiver 3 components -> Receive and chuck into buffer, Inspect buffer and do writes, Send replies 
+
+
+
+
+
+
+
+
